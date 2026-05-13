@@ -26,6 +26,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 
+# Portable timeout wrapper (used to bound the direct-mode call)
+source "$SCRIPT_DIR/portable-timeout.sh"
+
 # Shared project-root resolver (CLAUDE_PROJECT_DIR -> git toplevel, realpath-canonical)
 source "$SCRIPT_DIR/../hooks/lib/project-root.sh"
 
@@ -102,7 +105,7 @@ while [[ $# -gt 0 ]]; do
                 echo "Error: --timeout requires a number argument (seconds)" >&2
                 exit 1
             fi
-            if ! [[ "$2" =~ ^[0-9]+$ ]]; then
+            if ! [[ "$2" =~ ^[1-9][0-9]*$ ]]; then
                 echo "Error: --timeout must be a positive integer (seconds), got: $2" >&2
                 exit 1
             fi
@@ -217,6 +220,7 @@ $QUESTION
 - Run ID: $RUN_ID
 - Timestamp: $TIMESTAMP
 - Tool: gpt-pro
+- Model: gpt-5-pro
 EOF
 
 # Write prompt to a file for gpt-pro-relay to read via stdin
@@ -266,6 +270,7 @@ write_metadata() {
     cat > "$SKILL_DIR/metadata.md" << EOF
 ---
 tool: gpt-pro
+model: gpt-5-pro
 run_id: $RUN_ID
 transport: $([ "$DIRECT_MODE" -eq 1 ] && echo "direct" || echo "ssh:$SSH_HOST")
 timeout: $ASK_TIMEOUT
@@ -286,24 +291,28 @@ START_ISO=$(epoch_to_iso "$START_TIME")
 EXIT_CODE=0
 
 if (( DIRECT_MODE )); then
-    echo "ask-gpt-pro: invoking gpt-pro-relay directly on $SSH_HOST..." >&2
-    if ! gpt-pro-relay ask --run-id "$RUN_ID" \
+    echo "ask-gpt-pro: invoking gpt-pro-relay directly on $SSH_HOST (timeout ${ASK_TIMEOUT}s)..." >&2
+    if run_with_timeout "$ASK_TIMEOUT" gpt-pro-relay ask --run-id "$RUN_ID" \
             < "$PROMPT_FILE" \
             > "$GPT_PRO_STDOUT_FILE" \
             2> "$GPT_PRO_STDERR_FILE"; then
+        :
+    else
         EXIT_CODE=$?
     fi
 else
     SSH_OPTS=(-S none -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=4)
 
     echo "ask-gpt-pro: phase 1 - submitting via ssh $SSH_HOST..." >&2
-    if ! ssh "${SSH_OPTS[@]}" "$SSH_HOST" gpt-pro-relay ask --run-id "$RUN_ID" --no-wait \
+    if ssh "${SSH_OPTS[@]}" "$SSH_HOST" gpt-pro-relay ask --run-id "$RUN_ID" --no-wait \
             < "$PROMPT_FILE" \
             2>> "$GPT_PRO_STDERR_FILE"; then
+        :
+    else
         EXIT_CODE=$?
         echo "ask-gpt-pro: phase 1 submit failed (rc=$EXIT_CODE)" >&2
         END_TIME=$(date +%s)
-        write_metadata "$EXIT_CODE" "$((END_TIME - START_TIME))" "submit_failed" "$START_ISO"
+        write_metadata "$EXIT_CODE" "$((END_TIME - START_TIME))" "error" "$START_ISO"
         exit "$EXIT_CODE"
     fi
 

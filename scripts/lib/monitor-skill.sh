@@ -380,7 +380,11 @@ _humanize_monitor_skill() {
         echo "Focused: $(basename "$focus_dir")"
         echo "  Tool:     ${inv_tool}"
         echo "  Status:   ${inv_status:-unknown}"
-        echo "  Model:    ${model:-N/A} (${effort:-N/A})"
+        if [[ "$inv_tool" == "gpt-pro" ]] || [[ "${effort:-N/A}" == "N/A" ]]; then
+            echo "  Model:    ${model:-N/A}"
+        else
+            echo "  Model:    ${model:-N/A} (${effort:-N/A})"
+        fi
         echo "  Duration: ${duration:-N/A}"
         echo "  Started:  ${started_at:-N/A}"
         echo "  Question: $question"
