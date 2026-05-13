@@ -1,16 +1,17 @@
 {
   "name": "humanize",
-  "description": "Humanize - An iterative development plugin that uses Codex to review Claude's work. Creates a feedback loop where Claude implements plans and Codex independently reviews progress, ensuring quality through continuous refinement.",
+  "description": "Humanize (fork) - Iterative development plugin: Claude implements, Codex independently reviews. Replaces upstream's optional Gemini consult with ask-gpt-pro, which routes deep-reasoning questions to ChatGPT Pro Extended via gpt-pro-relay.",
   "version": "1.16.0",
   "author": {
-    "name": "PolyArch"
+    "name": "chrisliu298"
   },
-  "repository": "https://github.com/PolyArch/humanize",
-  "homepage": "https://github.com/PolyArch/humanize#readme",
+  "repository": "https://github.com/chrisliu298/humanize",
+  "homepage": "https://github.com/chrisliu298/humanize#readme",
   "license": "MIT",
   "keywords": [
     "iterative-development",
     "codex-review",
+    "gpt-pro",
     "ai-native",
     "feedback-loop",
     "goal-tracking",

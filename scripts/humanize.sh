@@ -1206,17 +1206,17 @@ humanize() {
                 codex)
                     _humanize_monitor_skill --tool-filter codex "$@"
                     ;;
-                gemini)
-                    _humanize_monitor_skill --tool-filter gemini "$@"
+                gpt-pro)
+                    _humanize_monitor_skill --tool-filter gpt-pro "$@"
                     ;;
                 *)
-                    echo "Usage: humanize monitor <rlcr|skill|codex|gemini>"
+                    echo "Usage: humanize monitor <rlcr|skill|codex|gpt-pro>"
                     echo ""
                     echo "Subcommands:"
-                    echo "  rlcr    Monitor the latest RLCR loop log from .humanize/rlcr"
-                    echo "  skill   Monitor all skill invocations (codex + gemini)"
-                    echo "  codex   Monitor ask-codex skill invocations only"
-                    echo "  gemini  Monitor ask-gemini skill invocations only"
+                    echo "  rlcr     Monitor the latest RLCR loop log from .humanize/rlcr"
+                    echo "  skill    Monitor all skill invocations (codex + gpt-pro)"
+                    echo "  codex    Monitor ask-codex skill invocations only"
+                    echo "  gpt-pro  Monitor ask-gpt-pro skill invocations only"
                     echo ""
                     echo "Features:"
                     echo "  - Fixed status bar showing session info, round progress, model config"
@@ -1231,10 +1231,10 @@ humanize() {
             echo "Usage: humanize <command> [args]"
             echo ""
             echo "Commands:"
-            echo "  monitor rlcr    Monitor the latest RLCR loop log"
-            echo "  monitor skill   Monitor all skill invocations (codex + gemini)"
-            echo "  monitor codex   Monitor ask-codex skill invocations only"
-            echo "  monitor gemini  Monitor ask-gemini skill invocations only"
+            echo "  monitor rlcr     Monitor the latest RLCR loop log"
+            echo "  monitor skill    Monitor all skill invocations (codex + gpt-pro)"
+            echo "  monitor codex    Monitor ask-codex skill invocations only"
+            echo "  monitor gpt-pro  Monitor ask-gpt-pro skill invocations only"
             return 1
             ;;
     esac

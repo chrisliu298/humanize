@@ -1,13 +1,13 @@
 {
-  "name": "PolyArch",
+  "name": "chrisliu298",
   "owner": {
-    "name": "PolyArch"
+    "name": "chrisliu298"
   },
   "plugins": [
     {
       "name": "humanize",
       "source": "./",
-      "description": "Humanize - An iterative development plugin that uses Codex to review Claude's work. Creates a feedback loop where Claude implements plans and Codex independently reviews progress, ensuring quality through continuous refinement.",
+      "description": "Humanize (fork) - Iterative development plugin: Claude implements, Codex independently reviews. Replaces upstream's optional Gemini consult with ask-gpt-pro, which routes deep-reasoning questions to ChatGPT Pro Extended via gpt-pro-relay.",
       "version": "1.16.0"
     }
   ]

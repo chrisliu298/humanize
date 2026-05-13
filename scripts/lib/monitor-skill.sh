@@ -3,7 +3,7 @@
 # monitor-skill.sh - Skill monitor for humanize
 #
 # Provides the _humanize_monitor_skill function for monitoring
-# skill invocations (ask-codex, ask-gemini) from .humanize/skill directory.
+# skill invocations (ask-codex, ask-gpt-pro) from .humanize/skill directory.
 #
 # This file is sourced by humanize.sh and depends on:
 # - monitor-common.sh (monitor_get_yaml_value, monitor_format_timestamp, etc.)
@@ -13,7 +13,7 @@
 # Shows a fixed status bar with aggregate stats and latest invocation details,
 # with live output display in the scrollable area below.
 #
-# Accepts --tool-filter <codex|gemini> to show only invocations from a
+# Accepts --tool-filter <codex|gpt-pro> to show only invocations from a
 # specific tool.  Without the filter, all invocations are shown.
 _humanize_monitor_skill() {
     # Enable 0-indexed arrays in zsh for bash compatibility
@@ -43,13 +43,13 @@ _humanize_monitor_skill() {
     # Check if .humanize/skill exists
     if [[ ! -d "$skill_dir" ]]; then
         echo "Error: $skill_dir directory not found in current directory"
-        echo "Run /humanize:ask-codex or /humanize:ask-gemini first to create skill invocations"
+        echo "Run /humanize:ask-codex or /humanize:ask-gpt-pro first to create skill invocations"
         return 1
     fi
 
     # Determine the tool for a given invocation directory.
     # Reads metadata.md first (completed), falls back to input.md (running).
-    # Returns: codex, gemini, or unknown
+    # Returns: codex, gpt-pro, or unknown
     _skill_get_tool() {
         local dir="$1"
         if [[ -f "$dir/metadata.md" ]]; then
@@ -165,7 +165,7 @@ _humanize_monitor_skill() {
     # Find the best file to monitor for a skill invocation
     # Searches both global cache (~/.cache/humanize/), local cache ($dir/cache/),
     # and project-local files (.humanize/skill/) for the best content.
-    # Supports both codex (codex-run.*) and gemini (gemini-run.*) cache files.
+    # Supports both codex (codex-run.*) and gpt-pro (gpt-pro-run.*) cache files.
     _skill_find_monitored_file() {
         local dir="$1"
         local gcache=$(_skill_find_cache_dir "$dir")
@@ -176,7 +176,7 @@ _humanize_monitor_skill() {
         # Determine which tool produced this invocation for cache file naming
         local inv_tool=$(_skill_get_tool "$dir")
         local run_prefix="codex-run"
-        [[ "$inv_tool" == "gemini" ]] && run_prefix="gemini-run"
+        [[ "$inv_tool" == "gpt-pro" ]] && run_prefix="gpt-pro-run"
 
         # Helper: check a cache directory for best file
         # Args: cache_dir, prefer_log (true for running, false for completed)
@@ -189,13 +189,13 @@ _humanize_monitor_skill() {
                 [[ -f "$c/${run_prefix}.log" ]] && { echo "$c/${run_prefix}.log"; return; }
                 # Fallback: try the other prefix for legacy/mixed invocations
                 [[ -f "$c/codex-run.log" && -s "$c/codex-run.log" ]] && { echo "$c/codex-run.log"; return; }
-                [[ -f "$c/gemini-run.log" && -s "$c/gemini-run.log" ]] && { echo "$c/gemini-run.log"; return; }
+                [[ -f "$c/gpt-pro-run.log" && -s "$c/gpt-pro-run.log" ]] && { echo "$c/gpt-pro-run.log"; return; }
             else
                 [[ -f "$c/${run_prefix}.out" && -s "$c/${run_prefix}.out" ]] && { echo "$c/${run_prefix}.out"; return; }
                 [[ -f "$c/${run_prefix}.log" && -s "$c/${run_prefix}.log" ]] && { echo "$c/${run_prefix}.log"; return; }
                 # Fallback
                 [[ -f "$c/codex-run.out" && -s "$c/codex-run.out" ]] && { echo "$c/codex-run.out"; return; }
-                [[ -f "$c/gemini-run.out" && -s "$c/gemini-run.out" ]] && { echo "$c/gemini-run.out"; return; }
+                [[ -f "$c/gpt-pro-run.out" && -s "$c/gpt-pro-run.out" ]] && { echo "$c/gpt-pro-run.out"; return; }
             fi
         }
 
@@ -220,7 +220,7 @@ _humanize_monitor_skill() {
     _skill_monitor_title() {
         case "$tool_filter" in
             codex)  echo " Humanize Skill Monitor [codex]" ;;
-            gemini) echo " Humanize Skill Monitor [gemini]" ;;
+            gpt-pro) echo " Humanize Skill Monitor [gpt-pro]" ;;
             *)      echo " Humanize Skill Monitor" ;;
         esac
     }
@@ -298,9 +298,9 @@ _humanize_monitor_skill() {
             cache_display="...${cache_display: -$csuffix_len}"
         fi
 
-        # Model display: for gemini, no effort; for codex, show (effort)
+        # Model display: for gpt-pro, no effort; for codex, show (effort)
         local model_display="$model"
-        if [[ "$inv_tool" == "gemini" ]] || [[ "$effort" == "N/A" ]]; then
+        if [[ "$inv_tool" == "gpt-pro" ]] || [[ "$effort" == "N/A" ]]; then
             model_display="$model"
         else
             model_display="$model ($effort)"

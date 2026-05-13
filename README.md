@@ -1,8 +1,14 @@
-# Humanize
+# Humanize (chrisliu298 fork)
 
 **Current Version: 1.16.0**
 
-> Derived from the [GAAC (GitHub-as-a-Context)](https://github.com/SihaoLiu/gaac) project.
+> Fork of [PolyArch/humanize](https://github.com/PolyArch/humanize) that
+> replaces the optional Gemini research consult with `ask-gpt-pro`, which
+> routes deep-reasoning questions to ChatGPT Pro Extended (GPT-5 Pro) via
+> [gpt-pro-relay](https://github.com/chrisliu298/gpt-pro) on a designated
+> host. The RLCR loop (Claude implements, Codex reviews) is unchanged.
+>
+> Derived upstream from the [GAAC (GitHub-as-a-Context)](https://github.com/SihaoLiu/gaac) project.
 
 A Claude Code plugin that provides iterative development with independent AI review. Build with confidence through continuous feedback loops.
 
@@ -29,15 +35,19 @@ The loop has two phases: **Implementation** (Claude works, Codex reviews summari
 ## Install
 
 ```bash
-# Add PolyArch marketplace
-/plugin marketplace add PolyArch/humanize
-# If you want to use development branch for experimental features
-/plugin marketplace add PolyArch/humanize#dev
+# Add this fork's marketplace
+/plugin marketplace add chrisliu298/humanize
 # Then install humanize plugin
-/plugin install humanize@PolyArch
+/plugin install humanize@chrisliu298
 ```
 
-Requires [codex CLI](https://github.com/openai/codex) for review. See the full [Installation Guide](docs/install-for-claude.md) for prerequisites and alternative setup options.
+Requires:
+
+- [codex CLI](https://github.com/openai/codex) for the RLCR review loop.
+- [gpt-pro-relay](https://github.com/chrisliu298/gpt-pro) reachable on `macmini`
+  (or override with `HUMANIZE_GPT_PRO_HOST`) if you want to use `ask-gpt-pro`.
+
+See the full [Installation Guide](docs/install-for-claude.md) for prerequisites and alternative setup options.
 
 ## Quick Start
 
@@ -62,18 +72,19 @@ Requires [codex CLI](https://github.com/openai/codex) for review. See the full [
    /humanize:start-rlcr-loop docs/plan.md
    ```
 
-5. **Consult Gemini** for deep web research (requires Gemini CLI):
+5. **Consult ChatGPT Pro Extended** for deep reasoning + web research (requires `gpt-pro-relay`):
    ```bash
-   /humanize:ask-gemini What are the latest best practices for X?
+   /humanize:ask-gpt-pro What are the latest best practices for X?
    ```
+   Each call typically takes 5-20 minutes. The wrapper auto-detects whether to invoke `gpt-pro-relay` directly (when running on `macmini`) or via the resilient SSH polling pattern.
 
 6. **Monitor progress (in another terminal, not inside Claude Code)**:
    ```bash
-   source <path/to/humanize>/scripts/humanize.sh # Or just add it into your .bashec or .zshrc
-   humanize monitor rlcr       # RLCR loop
-   humanize monitor skill      # All skill invocations (codex + gemini)
-   humanize monitor codex      # Codex invocations only
-   humanize monitor gemini     # Gemini invocations only
+   source <path/to/humanize>/scripts/humanize.sh # Or just add it into your .bashrc or .zshrc
+   humanize monitor rlcr        # RLCR loop
+   humanize monitor skill       # All skill invocations (codex + gpt-pro)
+   humanize monitor codex       # Codex invocations only
+   humanize monitor gpt-pro     # gpt-pro invocations only
    ```
 
 ## Monitor Dashboard

@@ -485,7 +485,7 @@ validate_model_name() {
     # Exact match for short aliases
     [[ "$model" =~ ^(opus|sonnet|haiku)$ ]] || \
     # Prefix match for full model IDs
-    [[ "$model" =~ ^(claude-|gpt-|o[0-9]|gemini-) ]]
+    [[ "$model" =~ ^(claude-|gpt-|o[0-9]) ]]
 }
 
 if ! validate_model_name "invalid-model-name"; then
