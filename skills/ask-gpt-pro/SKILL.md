@@ -1,6 +1,6 @@
 ---
 name: ask-gpt-pro
-description: Consult ChatGPT Pro Extended (GPT-5 Pro) as an independent expert via gpt-pro-relay. Sends a question or task to gpt-pro-relay on macmini (directly when running on macmini, over SSH otherwise) and returns a deep-reasoning response with built-in web research.
+description: GPT-Pro consult for the humanize RLCR workflow. Do not use independently — only invoke as part of a humanize command, agent, or workflow.
 argument-hint: "[--timeout SECONDS] [question or task]"
 allowed-tools: "Bash(${CLAUDE_PLUGIN_ROOT}/scripts/ask-gpt-pro.sh:*)"
 ---
@@ -11,6 +11,12 @@ Send a question or task to ChatGPT Pro Extended (GPT-5 Pro) and return its
 response. GPT-5 Pro performs deep reasoning with built-in web research,
 making this ideal for hard problems that benefit from up-to-date information
 and careful thinking. Typical wall-clock per call is **5-20 minutes**.
+
+## Scope
+
+This skill is the humanize plugin's GPT-Pro counterpart to `/humanize:ask-codex`.
+Do not use it independently — only invoke it as part of a humanize command, agent,
+or workflow.
 
 ## How to Use
 
