@@ -52,7 +52,7 @@ SKIP_IMPL_PLAN_ANCHORED="false"
 ASK_CODEX_QUESTION="true"
 AGENT_TEAMS="${DEFAULT_AGENT_TEAMS:-false}"
 BITLESSON_ALLOW_EMPTY_NONE="true"
-PRIVACY_MODE="false"
+PRIVACY_MODE="true"
 
 extract_plan_goal_content() {
     local plan_path="$1"
