@@ -136,7 +136,8 @@ OPTIONS:
                        Allow BitLesson delta with action:none even with no new entries (default)
   --require-bitlesson-entry-for-none
                        Require at least one BitLesson entry when action is none
-  --privacy            Disable methodology analysis at loop exit (default: analysis enabled)
+  --privacy            Disable methodology analysis at loop exit (default)
+  --no-privacy         Enable methodology analysis at loop exit
   -h, --help           Show this help message
 
 DESCRIPTION:
@@ -299,6 +300,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --privacy)
             PRIVACY_MODE="true"
+            shift
+            ;;
+        --no-privacy)
+            PRIVACY_MODE="false"
             shift
             ;;
         -*)
